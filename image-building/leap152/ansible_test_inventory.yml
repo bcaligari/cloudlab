@@ -1,0 +1,12 @@
+# Run as:
+#       ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook \
+#           -i ansible_test_inventory.yml \
+#           provision_image.yml
+all:
+  hosts:
+    default:
+      ansible_host: random.lab.cypraea.co.uk
+      ansible_connection: ssh
+      ansible_user: root
+      ansible_password: S4vill3
+      ansible_become: false

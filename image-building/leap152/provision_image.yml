@@ -1,0 +1,97 @@
+---
+- name: 'Provision Image'
+  hosts: default
+  become: false
+
+  tasks:
+    - name: wait for first boot tidyup
+      pause:
+        seconds: 120
+    
+    - name: reconfigure repositories
+      block:
+        - name: remove install repo
+          zypper_repository:
+            name: openSUSE-Leap-15.2-1
+            state: absent
+
+        - name: add main repo
+          zypper_repository:
+            name: repo-oss
+            repo: 'http://rmt15sp2.lab.cypraea.co.uk/repo/distribution/leap/15.2/repo/oss/'
+            state: present
+            runrefresh: no
+
+        - name: add update repo
+          zypper_repository:
+            name: repo-update
+            repo: 'http://rmt15sp2.lab.cypraea.co.uk/repo/update/leap/15.2/oss/'
+            state: present
+            runrefresh: no
+
+    - name: freshen packages
+      block:
+        - name: refresh repositories
+          zypper_repository:
+            repo: '*'
+            runrefresh: yes
+    
+        - name: update all patches
+          zypper:
+            name: '*'
+            state: latest
+
+    - name: include cloud-init
+      block:
+        - name: install cloud-init
+          zypper:
+            name: 'cloud-init'
+            state: latest
+
+        - name: setup cloud-init
+          systemd:
+            name: cloud-init
+            enabled: yes 
+
+    - name: reset machine-id
+      block:
+        - name: remove machine-id
+          copy:
+            content: ''
+            dest: /etc/machine-id
+            force: yes
+            owner: root
+            group: root
+            mode: '0444'
+    
+        - name: check dbus machine-id symlink
+          file:
+            path: /var/lib/dbus/machine-id
+            src: /etc/machine-id
+            state: link
+
+# Can be used instead of iaid/duid for dhcp client id
+# if issues arise.
+#    - name: set dhcp client id to hwaddr
+#      lineinfile:
+#        path: /etc/sysconfig/network/dhcp
+#        regexp: '^DHCLIENT_CREATE_CID'
+#        line: 'DHCLIENT_CREATE_CID="hwaddr"'
+
+    - name: clean wicked iaid, duid, etc
+      block:
+        - name: find wicked xml stuff
+          find:
+            paths: /var/lib/wicked/
+            patterns: '*.xml'
+          register: wicked_xml_crap
+  
+        - name: delete found wicked xml stuff
+          file:
+            path: '{{ item.path }}'
+            state: absent
+          with_items: '{{ wicked_xml_crap.files }}'
+
+    - name: extra time
+      pause:
+        seconds: 120
