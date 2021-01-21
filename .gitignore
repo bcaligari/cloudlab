@@ -1,0 +1,10 @@
+artifacts/
+packer_cache/
+.vscode
+.swp
+crash.log
+.terraform/
+terraform.tfstate
+terraform.tfstate.*
+.terraform.*
+build.log
