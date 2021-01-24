@@ -1,0 +1,16 @@
+#cloud-config
+
+debug: True
+ssh_pwauth: True
+hostname: ${hostname}
+
+users:
+  - name: sysop
+    gecos: System Operator
+    lock_passwd: true
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: true
+    groups: [ users, cdrom ]
+    ssh_authorized_keys:
+      - ${ssh_key}
+
