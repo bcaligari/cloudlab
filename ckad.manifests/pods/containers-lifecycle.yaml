@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  labels:
+    app: my-app
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do date; sleep 5; done"]
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c", "echo pod.spec.container.lifecycle.postStart > /proc/1/fd/1"]
+      preStop:
+        exec:
+          command: ["/bin/sh", "-c", "echo pod.spec.container.lifecycle.preStop > /proc/1/fd/1"]

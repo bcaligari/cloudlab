@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: alpha-filt
+spec:
+  podSelector:
+    matchLabels:
+      radiation: alpha
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          radiation: beta
+    ports:
+    - port: 5001
+  - from:
+    - podSelector:
+        matchLabels:
+          radiation: gamma
+    ports:
+    - port: 5002
+  egress:
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+  - to:
+    - podSelector:
+        matchLabels:
+          radiation: beta
+    ports:
+    - port: 5000

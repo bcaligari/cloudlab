@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-cm
+  labels:
+    app: my-app
+data:
+  LAB_USER: sysop
+  LAB_PASSWORD: S4v1ll3
+  LAB_BASTION_IP: 172.16.0.1
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  labels:
+    app: my-app
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["/bin/sleep", "infinity"]
+    envFrom:
+    - configMapRef:
+        name: my-cm

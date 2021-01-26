@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-besteffort
+spec:
+  containers:
+  - image: busybox
+    name: pod-besteffort
+    command: ["/bin/sleep", "infinity"]
+    resources: {}

@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  labels:
+    app: my-app
+spec:
+  shareProcessNamespace: true
+  volumes:
+  - name: scratchpad
+    emptyDir: {}
+  initContainers:
+  - name: first
+    image: busybox
+    volumeMounts:
+    - name: scratchpad
+      mountPath: /srv/scratchpad
+    command: ["/bin/sh", "-c", "echo first >> /srv/scratchpad/initlog"]
+  - name: second
+    image: busybox
+    volumeMounts:
+    - name: scratchpad
+      mountPath: /srv/scratchpad
+    command: ["/bin/sh", "-c", "echo second >> /srv/scratchpad/initlog"]
+  - name: third
+    image: busybox
+    volumeMounts:
+    - name: scratchpad
+      mountPath: /srv/scratchpad
+    command: ["/bin/sh", "-c", "echo third >> /srv/scratchpad/initlog"]
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["/bin/tail", "-f", "/dev/null"]
+    volumeMounts:
+    - name: scratchpad
+      mountPath: /srv/scratchpad
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c", "echo long running container >> /srv/scratchpad/initlog"]

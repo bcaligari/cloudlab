@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpha
+  labels:
+    app: alpha
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: alpha
+  template:
+    metadata:
+      labels:
+        app: alpha
+        radiation: alpha
+    spec:
+      containers:
+      - name: port5000
+        image: busybox
+        command: ["/bin/nc", "-lk", "-p", "5000", "-e", "/bin/sh", "-c", "hostname; echo port 5000"]
+        ports:
+        - containerPort: 5000
+      - name: port5001
+        image: busybox
+        command: ["/bin/nc", "-lk", "-p", "5001", "-e", "/bin/sh", "-c", "hostname; echo port 5001"]
+        ports:
+        - containerPort: 5001
+      - name: port5002
+        image: busybox
+        command: ["/bin/nc", "-lk", "-p", "5002", "-e", "/bin/sh", "-c", "hostname; echo port 5002"]
+        ports:
+        - containerPort: 5002

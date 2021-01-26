@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  labels:
+    app: my-app
+spec:
+  volumes:
+  - name: scratchpad
+    emptyDir: {}
+  securityContext:
+    runAsUser: 2000
+    runAsGroup: 2100
+    fsGroup: 2200
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["/bin/sh"]
+    args: ["-c", "date > /srv/scratchpad/touched; sleep infinity"]
+    volumeMounts:
+    - name: scratchpad
+      mountPath: /srv/scratchpad
+

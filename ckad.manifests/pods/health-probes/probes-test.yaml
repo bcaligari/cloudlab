@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  labels:
+    app: my-app
+spec:
+  shareProcessNamespace: true
+  volumes:
+  - name: scratchpad
+    emptyDir: {}
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["/bin/sh", "-c", "sleep 120; touch /srv/scratchpad/started; sleep infinity"]
+    volumeMounts:
+    - name: scratchpad
+      mountPath: /srv/scratchpad
+  - name: nginx
+    image: nginx
+    ports:
+    -  containerPort: 80
+    volumeMounts:
+    - name: scratchpad
+      mountPath: /srv/scratchpad
+    startupProbe:
+      exec:
+        command: ["/usr/bin/test", "-f", "/srv/scratchpad/started"]
+      failureThreshold: 30
+      periodSeconds: 10
+    livenessProbe:
+      httpGet:
+        port: 80
+        path: /index.html
+      failureThreshold: 3
+      periodSeconds: 2
+    readinessProbe:
+      exec:
+        command: ["/usr/bin/test", "!", "-f", "/srv/scratchpad/full-up"]
+      periodSeconds: 2

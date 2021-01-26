@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret
+  labels:
+    app: my-app
+data:
+  LAB_PASSWORD: UzR2aWxsMw==
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-cm
+  labels:
+    app: my-app
+data:
+  LAB_USERNAME: sysop
+  LAB_IP: 172.16.0.100
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod-envfrom
+  labels:
+    app: my-app
+spec:
+  restartPolicy: Never
+  containers:
+  - name: busybox
+    image: busybox
+    command:
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "printenv | grep ^LAB_"
+    envFrom:
+    - configMapRef:
+        name: my-cm
+    - secretRef:
+        name: my-secret
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod-env
+  labels:
+    app: my-app
+spec:
+  restartPolicy: Never
+  containers:
+  - name: busybox
+    image: busybox
+    command: 
+    - "/bin/sh"
+    args:
+    - "-c"
+    - "printenv | grep ^XXX_"
+    env:
+    - name: XXX_XTRA
+      value: "hello moron"
+    - name: XXX_USERNAME
+      valueFrom:
+        configMapKeyRef:
+          name: my-cm
+          key: LAB_USERNAME
+    - name: XXX_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: my-secret
+          key: LAB_PASSWORD
+
+      

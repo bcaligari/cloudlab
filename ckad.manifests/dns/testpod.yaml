@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testpod
+spec:
+  shareProcessNamespace: true
+  volumes:
+  - name: scratchpad
+    emptyDir: {}
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["/bin/sleep", "infinity"]
+    volumeMounts:
+    - name: scratchpad
+      mountPath: /srv/scratchpad
+  - name: alpine
+    image: alpine
+    command: ["/usr/bin/tail", "-f", "/dev/null"]
+    volumeMounts:
+    - name: scratchpad
+      mountPath: /srv/scratchpad
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: scratchpad
+      mountPath: /usr/share/nginx/html

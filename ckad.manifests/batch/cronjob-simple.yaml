@@ -1,0 +1,19 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: my-cron
+spec:
+  jobTemplate:
+    metadata:
+      name: my-cron
+    spec:
+      template:
+        metadata:
+        spec:
+          containers:
+          - image: busybox
+            name: my-cron
+            command: ["/bin/sleep", "300"]
+          restartPolicy: OnFailure
+  schedule: '*/2 * * * *'
+  successfulJobsHistoryLimit: 5
