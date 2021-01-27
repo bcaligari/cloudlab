@@ -84,17 +84,3 @@ resource "libvirt_domain" "kvmdomain" {
     autoport    = true
   }
 }
-
-resource "local_file" "dnsmasq_injection" {
-  content = templatefile(
-    "${path.module}/templates/dnsmasq.tpl",
-    {
-      hostprefix = var.hostprefix
-      macs = {
-        "meh0" = "00:00",
-        "meh1" = "00:01"
-      }
-    }
-  )
-  filename = "${var.hostprefix}.conf"
-}
