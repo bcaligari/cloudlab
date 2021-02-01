@@ -18,14 +18,14 @@
         - name: add main repo
           zypper_repository:
             name: repo-oss
-            repo: 'http://rmt15sp2.lab.cypraea.co.uk/repo/distribution/leap/15.2/repo/oss/'
+            repo: 'http://rmt.lab.cypraea.co.uk/repo/distribution/leap/15.2/repo/oss/'
             state: present
             runrefresh: no
 
         - name: add update repo
           zypper_repository:
             name: repo-update
-            repo: 'http://rmt15sp2.lab.cypraea.co.uk/repo/update/leap/15.2/oss/'
+            repo: 'http://rmt.lab.cypraea.co.uk/repo/update/leap/15.2/oss/'
             state: present
             runrefresh: no
 
@@ -69,14 +69,6 @@
             path: /var/lib/dbus/machine-id
             src: /etc/machine-id
             state: link
-
-# Can be used instead of iaid/duid for dhcp client id
-# if issues arise.
-#    - name: set dhcp client id to hwaddr
-#      lineinfile:
-#        path: /etc/sysconfig/network/dhcp
-#        regexp: '^DHCLIENT_CREATE_CID'
-#        line: 'DHCLIENT_CREATE_CID="hwaddr"'
 
     - name: clean wicked iaid, duid, etc
       block:

@@ -5,14 +5,14 @@
     <add_on_others config:type="list">
       <listentry>
         <alias>repo-oss</alias>
-        <media_url><![CDATA[http://rmt15sp2.lab.cypraea.co.uk/repo/distribution/leap/15.2/repo/oss/]]></media_url>
+        <media_url><![CDATA[http://rmt.lab.cypraea.co.uk/repo/distribution/leap/15.2/repo/oss/]]></media_url>
         <name>Main Repository</name>
         <priority config:type="integer">99</priority>
         <product_dir/>
       </listentry>
       <listentry>
         <alias>repo-update</alias>
-        <media_url><![CDATA[http://rmt15sp2.lab.cypraea.co.uk/repo/update/leap/15.2/oss/]]></media_url>
+        <media_url><![CDATA[http://rmt.lab.cypraea.co.uk/repo/update/leap/15.2/oss/]]></media_url>
         <name>Main Update Repository</name>
         <priority config:type="integer">99</priority>
         <product_dir/>
