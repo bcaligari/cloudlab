@@ -39,131 +39,8 @@
     <image_installation config:type="boolean">false</image_installation>
   </deploy_image>
   <firewall>
-    <default_zone>public</default_zone>
     <enable_firewall config:type="boolean">false</enable_firewall>
-    <log_denied_packets>off</log_denied_packets>
     <start_firewall config:type="boolean">false</start_firewall>
-    <zones config:type="list">
-      <zone>
-        <description>Unsolicited incoming network packets are rejected. Incoming packets that are related to outgoing network connections are accepted. Outgoing network connections are allowed.</description>
-        <interfaces config:type="list"/>
-        <masquerade config:type="boolean">false</masquerade>
-        <name>block</name>
-        <ports config:type="list"/>
-        <protocols config:type="list"/>
-        <services config:type="list"/>
-        <short>Block</short>
-        <target>%%REJECT%%</target>
-      </zone>
-      <zone>
-        <description>For computers in your demilitarized zone that are publicly-accessible with limited access to your internal network. Only selected incoming connections are accepted.</description>
-        <interfaces config:type="list"/>
-        <masquerade config:type="boolean">false</masquerade>
-        <name>dmz</name>
-        <ports config:type="list"/>
-        <protocols config:type="list"/>
-        <services config:type="list">
-          <service>ssh</service>
-        </services>
-        <short>DMZ</short>
-        <target>default</target>
-      </zone>
-      <zone>
-        <description>Unsolicited incoming network packets are dropped. Incoming packets that are related to outgoing network connections are accepted. Outgoing network connections are allowed.</description>
-        <interfaces config:type="list"/>
-        <masquerade config:type="boolean">false</masquerade>
-        <name>drop</name>
-        <ports config:type="list"/>
-        <protocols config:type="list"/>
-        <services config:type="list"/>
-        <short>Drop</short>
-        <target>DROP</target>
-      </zone>
-      <zone>
-        <description>For use on external networks. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
-        <interfaces config:type="list"/>
-        <masquerade config:type="boolean">true</masquerade>
-        <name>external</name>
-        <ports config:type="list"/>
-        <protocols config:type="list"/>
-        <services config:type="list">
-          <service>ssh</service>
-        </services>
-        <short>External</short>
-        <target>default</target>
-      </zone>
-      <zone>
-        <description>For use in home areas. You mostly trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
-        <interfaces config:type="list"/>
-        <masquerade config:type="boolean">false</masquerade>
-        <name>home</name>
-        <ports config:type="list"/>
-        <protocols config:type="list"/>
-        <services config:type="list">
-          <service>ssh</service>
-          <service>mdns</service>
-          <service>samba-client</service>
-          <service>dhcpv6-client</service>
-        </services>
-        <short>Home</short>
-        <target>default</target>
-      </zone>
-      <zone>
-        <description>For use on internal networks. You mostly trust the other computers on the networks to not harm your computer. Only selected incoming connections are accepted.</description>
-        <interfaces config:type="list"/>
-        <masquerade config:type="boolean">false</masquerade>
-        <name>internal</name>
-        <ports config:type="list"/>
-        <protocols config:type="list"/>
-        <services config:type="list">
-          <service>ssh</service>
-          <service>mdns</service>
-          <service>samba-client</service>
-          <service>dhcpv6-client</service>
-        </services>
-        <short>Internal</short>
-        <target>default</target>
-      </zone>
-      <zone>
-        <description>For use in public areas. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
-        <interfaces config:type="list"/>
-        <masquerade config:type="boolean">false</masquerade>
-        <name>public</name>
-        <ports config:type="list"/>
-        <protocols config:type="list"/>
-        <services config:type="list">
-          <service>ssh</service>
-          <service>dhcpv6-client</service>
-        </services>
-        <short>Public</short>
-        <target>default</target>
-      </zone>
-      <zone>
-        <description>All network connections are accepted.</description>
-        <interfaces config:type="list"/>
-        <masquerade config:type="boolean">false</masquerade>
-        <name>trusted</name>
-        <ports config:type="list"/>
-        <protocols config:type="list"/>
-        <services config:type="list"/>
-        <short>Trusted</short>
-        <target>ACCEPT</target>
-      </zone>
-      <zone>
-        <description>For use in work areas. You mostly trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
-        <interfaces config:type="list"/>
-        <masquerade config:type="boolean">false</masquerade>
-        <name>work</name>
-        <ports config:type="list"/>
-        <protocols config:type="list"/>
-        <services config:type="list">
-          <service>ssh</service>
-          <service>dhcpv6-client</service>
-        </services>
-        <short>Work</short>
-        <target>default</target>
-      </zone>
-    </zones>
   </firewall>
   <general>
     <ask-list config:type="list"/>
@@ -174,52 +51,6 @@
     <signature-handling/>
     <storage/>
   </general>
-  <host>
-    <hosts config:type="list">
-      <hosts_entry>
-        <host_address>127.0.0.1</host_address>
-        <names config:type="list">
-          <name>localhost</name>
-        </names>
-      </hosts_entry>
-      <hosts_entry>
-        <host_address>::1</host_address>
-        <names config:type="list">
-          <name>localhost ipv6-localhost ipv6-loopback</name>
-        </names>
-      </hosts_entry>
-      <hosts_entry>
-        <host_address>fe00::0</host_address>
-        <names config:type="list">
-          <name>ipv6-localnet</name>
-        </names>
-      </hosts_entry>
-      <hosts_entry>
-        <host_address>ff00::0</host_address>
-        <names config:type="list">
-          <name>ipv6-mcastprefix</name>
-        </names>
-      </hosts_entry>
-      <hosts_entry>
-        <host_address>ff02::1</host_address>
-        <names config:type="list">
-          <name>ipv6-allnodes</name>
-        </names>
-      </hosts_entry>
-      <hosts_entry>
-        <host_address>ff02::2</host_address>
-        <names config:type="list">
-          <name>ipv6-allrouters</name>
-        </names>
-      </hosts_entry>
-      <hosts_entry>
-        <host_address>ff02::3</host_address>
-        <names config:type="list">
-          <name>ipv6-allhosts</name>
-        </names>
-      </hosts_entry>
-    </hosts>
-  </host>
   <keyboard>
     <keymap>english-uk</keymap>
   </keyboard>
@@ -341,28 +172,6 @@
     <proxy_password/>
     <proxy_user/>
   </proxy>
-  <report>
-    <errors>
-      <log config:type="boolean">true</log>
-      <show config:type="boolean">true</show>
-      <timeout config:type="integer">0</timeout>
-    </errors>
-    <messages>
-      <log config:type="boolean">true</log>
-      <show config:type="boolean">true</show>
-      <timeout config:type="integer">0</timeout>
-    </messages>
-    <warnings>
-      <log config:type="boolean">true</log>
-      <show config:type="boolean">true</show>
-      <timeout config:type="integer">0</timeout>
-    </warnings>
-    <yesno_messages>
-      <log config:type="boolean">true</log>
-      <show config:type="boolean">true</show>
-      <timeout config:type="integer">0</timeout>
-    </yesno_messages>
-  </report>
   <services-manager>
     <default_target>multi-user</default_target>
     <services>
@@ -439,15 +248,4 @@
     <hwclock>UTC</hwclock>
     <timezone>Europe/London</timezone>
   </timezone>
-  <user_defaults>
-    <expire/>
-    <group>100</group>
-    <groups/>
-    <home>/home</home>
-    <inactive>-1</inactive>
-    <no_groups config:type="boolean">true</no_groups>
-    <shell>/bin/bash</shell>
-    <skel>/etc/skel</skel>
-    <umask>022</umask>
-  </user_defaults>
 </profile>
