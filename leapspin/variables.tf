@@ -4,11 +4,6 @@ variable "qemu" {
   default     = "qemu:///system"
 }
 
-variable "basemac" {
-  type        = string
-  description = "MAC address prefix except last byte but including colon"
-}
-
 variable "srvcount" {
   type        = number
   description = "number of domains"
