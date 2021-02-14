@@ -1,37 +1,50 @@
 ---
 all:
-  children:
-    control:
-      hosts:
-        master0:
-          ansible_host: master0.lab.cypraea.co.uk
-          ansible_user: sysop
-          ansible_connection: ssh
-          ansible_ssh_private_key_file: ~/.credentials/id_rsa
-        master1:
-          ansible_host: master1.lab.cypraea.co.uk
-          ansible_user: sysop
-          ansible_connection: ssh
-          ansible_ssh_private_key_file: ~/.credentials/id_rsa
-        master2:
-          ansible_host: master2.lab.cypraea.co.uk
-          ansible_user: sysop
-          ansible_connection: ssh
-          ansible_ssh_private_key_file: ~/.credentials/id_rsa
-    workers:
-      hosts:
-        worker0:
-          ansible_host: worker0.lab.cypraea.co.uk
-          ansible_user: sysop
-          ansible_connection: ssh
-          ansible_ssh_private_key_file: ~/.credentials/id_rsa
-        worker1:
-          ansible_host: worker1.lab.cypraea.co.uk
-          ansible_user: sysop
-          ansible_connection: ssh
-          ansible_ssh_private_key_file: ~/.credentials/id_rsa
-        worker2:
-          ansible_host: worker2.lab.cypraea.co.uk
-          ansible_user: sysop
-          ansible_connection: ssh
-          ansible_ssh_private_key_file: ~/.credentials/id_rsa
+  hosts:
+    master0:
+      ansible_host: master0.lab.cypraea.co.uk
+      ansible_user: sysop
+      ansible_connection: ssh
+      ansible_ssh_private_key_file: ~/.credentials/id_rsa
+    master1:
+      ansible_host: master1.lab.cypraea.co.uk
+      ansible_user: sysop
+      ansible_connection: ssh
+      ansible_ssh_private_key_file: ~/.credentials/id_rsa
+    master2:
+      ansible_host: master2.lab.cypraea.co.uk
+      ansible_user: sysop
+      ansible_connection: ssh
+      ansible_ssh_private_key_file: ~/.credentials/id_rsa
+    worker0:
+      ansible_host: worker0.lab.cypraea.co.uk
+      ansible_user: sysop
+      ansible_connection: ssh
+      ansible_ssh_private_key_file: ~/.credentials/id_rsa
+    worker1:
+      ansible_host: worker1.lab.cypraea.co.uk
+      ansible_user: sysop
+      ansible_connection: ssh
+      ansible_ssh_private_key_file: ~/.credentials/id_rsa
+    worker2:
+      ansible_host: worker2.lab.cypraea.co.uk
+      ansible_user: sysop
+      ansible_connection: ssh
+      ansible_ssh_private_key_file: ~/.credentials/id_rsa
+control:
+  hosts:
+    master0:
+    master1:
+    master2:
+workers:
+  hosts:
+    worker0:
+    worker1:
+    worker2:
+first_masters:
+  hosts:
+    master0:
+extra_masters:
+  hosts:
+    master1:
+    master2:
