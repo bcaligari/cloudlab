@@ -1,0 +1,92 @@
+---
+- name: 'Provision Image'
+  hosts: all
+  become: true
+
+  tasks:
+    
+    - name: update packages
+      block:
+        - name: update cache
+          ansible.builtin.apt:
+            update_cache: yes
+            cache_valid_time: 3600
+
+        - name: upgrade packages
+          ansible.builtin.apt:
+            name: '*'
+            state: latest
+
+        - name: install needed packages
+          ansible.builtin.apt:
+            name: '{{ item }}'
+            state: latest
+          loop:
+            - 'apt-transport-https'
+            - 'curl'
+
+    - name: configure modules
+      block:
+        - name: load modules
+          ansible.builtin.lineinfile:
+            path: /etc/modules-load.d/k8s.conf
+            regexp: '\b{{ item }}\b'
+            line: '{{ item }}'
+            create: yes
+            mode: '0644'
+          loop:
+            - 'overlay'
+            - 'br_netfilter'
+          register: changed_modules
+
+        - name: reload modules
+          ansible.builtin.systemd:
+            name: systemd-modules-load
+            state: restarted
+          when: changed_modules.changed
+
+    - name: configure sysctl
+      block:
+        - name: net.ipv4.ip_forward
+          ansible.posix.sysctl:
+            name: net.ipv4.ip_forward
+            value: '1'
+            sysctl_file: /etc/sysctl.d/99-k8s.conf
+            sysctl_set: yes
+            state: present
+            reload: yes
+
+        - name: net.bridge.bridge-nf-call-iptables
+          ansible.posix.sysctl:
+            name: net.bridge.bridge-nf-call-iptables
+            value: '1'
+            sysctl_file: /etc/sysctl.d/99-k8s.conf
+            sysctl_set: yes
+            state: present
+            reload: yes
+
+        - name: net.bridge.bridge-nf-call-ip6tables
+          ansible.posix.sysctl:
+            name: net.bridge.bridge-nf-call-ip6tables
+            value: '1'
+            sysctl_file: /etc/sysctl.d/99-k8s.conf
+            sysctl_set: yes
+            state: present
+            reload: yes
+
+    - name: containerd
+      block:
+        - name: install containerd packages
+          ansible.builtin.apt:
+            name: '{{ item }}'
+            state: latest
+          loop:
+            - 'containerd'
+            
+        - name: /etc/containerd
+          ansible.builtin.file:
+            path: /etc/containerd
+            owner: root
+            group: root
+            mode: '755'
+            state: directory
