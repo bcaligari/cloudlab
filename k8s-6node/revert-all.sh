@@ -1,11 +1,17 @@
-#!/bin/bash -x
+#!/bin/bash
 
-. cluster.conf
+KVM_DOMAINS=$(cat ./kvm-domains)
 
-SNAPSHOT="sudo"
+if [ -z "$1" ]
+then
+	echo Usage: $0 SNAPSHOT
+	exit 1
+fi
 
-for k8sdom in $(cat ${KVM_DOMAINS}); do
-	virsh snapshot-revert \
+SNAPSHOT="$1"
+
+for k8sdom in ${KVM_DOMAINS}; do
+	virsh -d 1 snapshot-revert \
 		--domain $k8sdom \
 		$SNAPSHOT
 done

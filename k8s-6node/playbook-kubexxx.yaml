@@ -72,23 +72,11 @@
             - 'kubeadm'
             - 'kubectl'
 
-        - name: check for /var/lib/kubelet/config.yaml
-          ansible.builtin.stat:
-            path: /var/lib/kubelet/config.yaml
-          register: kubelet_config_yaml
-
-        - name: create /var/lib/kubelet/config.yaml
-          ansible.builtin.copy:
-            src: ./files/var_lib_kubelet_config.yaml
-            dest: /var/lib/kubelet/config.yaml
-            owner: root
-            group: root
-            mode: '0644'
-          when: not kubelet_config_yaml.stat.exists or kubelet_config_yaml.stat.size == 0
-
-        - name: add kubadm repo
-          ansible.builtin.lineinfile:
-            path: /var/lib/kubelet/config.yaml
-            regexp: '\bcgroupDriver\b'
-            line: 'cgroupDriver: systemd'
-            create: no
+        - name: hold kubexxx versions
+          dpkg_selections:
+            name: '{{ item }}'
+            selection: hold
+          loop:
+            - 'kubelet'
+            - 'kubeadm'
+            - 'kubectl'

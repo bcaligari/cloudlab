@@ -1,5 +1,5 @@
 ---
-- name: 'Provision Image'
+- name: 'Clean up and provision VMs'
   hosts: all
   become: true
 
@@ -23,3 +23,34 @@
           loop:
             - 'apt-transport-https'
             - 'curl'
+
+    - name: remove swap
+      block:
+        - name: swapoff
+          ansible.builtin.command:
+            argv:
+              - swapoff
+              - -a
+
+        - name: delete swapfile
+          ansible.builtin.file:
+            name: '/swap.img'
+            state: absent
+        
+        - name: clean up /etc/fstab
+          ansible.builtin.lineinfile:
+            path: /etc/fstab
+            regexp: '\sswap\s'
+            state: absent
+
+        - name: clean up systemd swap bits
+          systemd:
+            name: swap.img.swap
+            enabled: no
+          ignore_errors: yes
+
+    - name: fix /etc/hosts silliness
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: '^\s*127.0.1.1\s' 
+        state: absent
