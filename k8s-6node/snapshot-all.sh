@@ -2,7 +2,8 @@
 
 . cluster.conf
 
-SNAPSHOT="sudo"
+#SNAPSHOT="sudo"
+SNAPSHOT="prefab"
 
 for k8sdom in $(cat ${KVM_DOMAINS}); do
 	virsh snapshot-create-as \

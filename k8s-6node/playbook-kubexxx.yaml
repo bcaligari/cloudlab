@@ -1,0 +1,94 @@
+# https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+# https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/#config-file
+---
+- name: 'Install kubeadm, kubelet, kubectl'
+  hosts: all
+  become: true
+
+  tasks:
+    - name: kubadm
+      block:
+        - name: load modules
+          ansible.builtin.lineinfile:
+            path: /etc/modules-load.d/k8s.conf
+            regexp: '\b{{ item }}\b'
+            line: '{{ item }}'
+            create: yes
+            mode: '0644'
+          loop:
+            - 'br_netfilter'
+          register: changed_modules
+
+        - name: reload modules
+          ansible.builtin.systemd:
+            name: systemd-modules-load
+            state: restarted
+          when: changed_modules.changed
+
+        - name: net.bridge.bridge-nf-call-iptables
+          ansible.posix.sysctl:
+            name: net.bridge.bridge-nf-call-iptables
+            value: '1'
+            sysctl_file: /etc/sysctl.d/99-k8s.conf
+            sysctl_set: yes
+            state: present
+            reload: yes
+
+        - name: net.bridge.bridge-nf-call-ip6tables
+          ansible.posix.sysctl:
+            name: net.bridge.bridge-nf-call-ip6tables
+            value: '1'
+            sysctl_file: /etc/sysctl.d/99-k8s.conf
+            sysctl_set: yes
+            state: present
+            reload: yes
+
+        - name: add kubadm rsa2048 2020-12-04 repo gpg key
+          ansible.builtin.apt_key:
+            url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+            id: 59FE0256827269DC81578F928B57C5C2836F4BEB
+            state: present
+
+        - name: add kubadm repo
+          ansible.builtin.lineinfile:
+            path: /etc/apt/sources.list.d/kubernetes.list
+            regexp: '\bdeb https://apt.kubernetes.io/\s'
+            line: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
+            owner: root
+            group: root
+            mode: '0644'
+            create: yes
+
+        - name: update cache
+          ansible.builtin.apt:
+            update_cache: yes
+
+        - name: install kubexxx
+          ansible.builtin.apt:
+            name: '{{ item }}'
+            state: latest
+          loop:
+            - 'kubelet'
+            - 'kubeadm'
+            - 'kubectl'
+
+        - name: check for /var/lib/kubelet/config.yaml
+          ansible.builtin.stat:
+            path: /var/lib/kubelet/config.yaml
+          register: kubelet_config_yaml
+
+        - name: create /var/lib/kubelet/config.yaml
+          ansible.builtin.copy:
+            src: ./files/var_lib_kubelet_config.yaml
+            dest: /var/lib/kubelet/config.yaml
+            owner: root
+            group: root
+            mode: '0644'
+          when: not kubelet_config_yaml.stat.exists or kubelet_config_yaml.stat.size == 0
+
+        - name: add kubadm repo
+          ansible.builtin.lineinfile:
+            path: /var/lib/kubelet/config.yaml
+            regexp: '\bcgroupDriver\b'
+            line: 'cgroupDriver: systemd'
+            create: no

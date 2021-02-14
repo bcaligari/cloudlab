@@ -1,0 +1,25 @@
+---
+- name: 'Provision Image'
+  hosts: all
+  become: true
+
+  tasks:
+    - name: update packages
+      block:
+        - name: update cache
+          ansible.builtin.apt:
+            update_cache: yes
+            cache_valid_time: 3600
+
+        - name: upgrade packages
+          ansible.builtin.apt:
+            name: '*'
+            state: latest
+
+        - name: install needed packages
+          ansible.builtin.apt:
+            name: '{{ item }}'
+            state: latest
+          loop:
+            - 'apt-transport-https'
+            - 'curl'

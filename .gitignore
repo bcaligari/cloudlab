@@ -8,3 +8,7 @@ terraform.tfstate
 terraform.tfstate.*
 .terraform.*
 build.log
+tmp/
+dnsrip/
+rancher/
+lab/

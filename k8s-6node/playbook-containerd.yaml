@@ -1,31 +1,11 @@
+# https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
 ---
-- name: 'Provision Image'
+- name: 'Install Containerd'
   hosts: all
   become: true
 
   tasks:
-    
-    - name: update packages
-      block:
-        - name: update cache
-          ansible.builtin.apt:
-            update_cache: yes
-            cache_valid_time: 3600
-
-        - name: upgrade packages
-          ansible.builtin.apt:
-            name: '*'
-            state: latest
-
-        - name: install needed packages
-          ansible.builtin.apt:
-            name: '{{ item }}'
-            state: latest
-          loop:
-            - 'apt-transport-https'
-            - 'curl'
-
-    - name: configure modules
+    - name: containerd
       block:
         - name: load modules
           ansible.builtin.lineinfile:
@@ -45,8 +25,6 @@
             state: restarted
           when: changed_modules.changed
 
-    - name: configure sysctl
-      block:
         - name: net.ipv4.ip_forward
           ansible.posix.sysctl:
             name: net.ipv4.ip_forward
@@ -74,19 +52,34 @@
             state: present
             reload: yes
 
-    - name: containerd
-      block:
         - name: install containerd packages
           ansible.builtin.apt:
             name: '{{ item }}'
             state: latest
           loop:
             - 'containerd'
+          register: containerd_packages
             
         - name: /etc/containerd
           ansible.builtin.file:
             path: /etc/containerd
             owner: root
             group: root
-            mode: '755'
+            mode: '0755'
             state: directory
+
+        - name: /etc/containerd/config.toml
+          ansible.builtin.copy:
+            src: ./files/etc_containerd_config.toml
+            dest: /etc/containerd/config.toml
+            owner: root
+            group: root
+            mode: '0644'
+          register: containerd_config
+
+        - name: restart containerd service
+          ansible.builtin.systemd:
+            name: containerd
+            enabled: yes
+            state: restarted
+          when: containerd_packages.changed or containerd_config.changed
